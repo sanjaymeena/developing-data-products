@@ -1,0 +1,97 @@
+Coursera Developing Data Products Project:  Compound Interest Calculator
+========================================================
+author: Sanjay Meena
+date: `r date()`
+
+
+Objective
+========================================================
+This presentation is for the course project geared towards understanding of following conncepts
+
+- [Shiny](http://shiny.rstudio.com/) to build data products applications
+- **R-Presentation** or [slidify](http://slidify.org/) to create data products related presentations
+
+
+Application
+========================================================
+
+- **“The most powerful force in the universe is compound interest”** – Albert Einstein
+- Use this calculator to determine how much your money can grow using the power of compound interest.
+- You can use the application : [Here](https://sanjaymeena.shinyapps.io/compound_interest_calculator) 
+- Source code for the project is available on [Github](https://github.com/sanjaymeena/developing-data-products/tree/master/compound_interest_calculator)
+
+
+Results on some Input data
+========================================================
+
+```{r, echo=FALSE}
+library(data.table) 
+library(dplyr)
+library(ggplot2)
+library(stringr)
+library(reshape2)
+
+principle <- 1000
+r <- 26/100
+t <- 5
+contribution <- 100
+
+
+data <- data.frame(year = seq(1, t))
+data$start_principle <- 0
+data$start_balance <- 0
+data$interest <- 0
+data$end_balance <-0 
+data$end_principle <- 0
+
+data$start_balance <- principle
+
+
+compound_without_contribution <- function (x){
+  
+  (principle) * (1 + r)^x
+}
+
+compound_with_contribution <- function (x){
+  (principle * (1 + r)^x) + contribution*( ((1 + r)^x -1) / r  )
+}
+calculateInterest <- function(x){
+  x*r
+}
+calculateStartPrinciple <- function(x){
+  principle+ (x-1)*contribution
+}
+
+
+data <- data %>% mutate(end_balance=compound_with_contribution(year)) %>% mutate(start_balance=  ifelse(is.na(lag(end_balance)) ,start_balance ,lag(end_balance) )) %>% mutate(interest= calculateInterest(as.numeric(start_balance) )) %>%  mutate(start_principle= calculateStartPrinciple(year)  ) %>% mutate(end_principle= start_principle+contribution  ) 
+
+
+df <- select(data,year,interest,end_balance,end_principle)
+names(df) <- c("Year","Interest","End Balance Amount", "End Principle Amount")
+reshapeDF <- melt(df, id.vars="Year")
+
+ 
+ 
+g <- ggplot(reshapeDF, aes(x =Year, y=value, fill=variable)) + 
+  geom_line() + 
+  ylab(label="Money") + 
+  xlab("Years")
+
+g <- g + ggtitle(paste("Compound Interest Graph")) 
+g
+
+```
+***
+```{r, echo=FALSE}
+   t <- tail(data,1)
+    
+    result <- cat("Total years invested : " , t$year, " \n" ) + cat("Total amount invested : " , t$end_principle, "$\n") + cat("Interest rate : " , r*100, "%\n") + cat("Total interest earned: ", sum(data$interest), "$\n") + cat("Final Amount : ", t$end_balance, "$\n") 
+  
+```
+
+Images of the App
+========================================================
+
+![image](screenshot.png)
+
+

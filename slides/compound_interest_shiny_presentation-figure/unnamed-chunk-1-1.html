@@ -1,0 +1,64 @@
+<!doctype HTML>
+<meta charset = 'utf-8'>
+<html>
+  <head>
+    
+    <script src='//ramnathv.github.io/rCharts/libraries/widgets/polycharts/js/polychart2.standalone.js' type='text/javascript'></script>
+    
+    <style>
+    .rChart {
+      display: block;
+      margin-left: auto; 
+      margin-right: auto;
+      width: 800px;
+      height: 400px;
+    }  
+    </style>
+    
+  </head>
+  <body >
+    
+    <div id = 'myChart' class = 'rChart polycharts'></div>    
+    <script type='text/javascript'>
+    var chartParams = {
+ "dom": "myChart",
+"width":    800,
+"height":    400,
+"layers": [
+ {
+ "x": "Year",
+"y": "value",
+"data": {
+ "Year": [ 1, 2, 3, 4, 5, 1, 2, 3, 4, 5 ],
+"variable": [ "Final Amount", "Final Amount", "Final Amount", "Final Amount", "Final Amount", "Invested Amount", "Invested Amount", "Invested Amount", "Invested Amount", "Invested Amount" ],
+"value": [   1360, 1813.6, 2385.1, 3105.3, 4012.6,   1100,   1200,   1300,   1400,   1500 ] 
+},
+"facet": null,
+"type": "line",
+"color": "variable" 
+} 
+],
+"facet": [],
+"guides": {
+ "y": {
+ "min":      0,
+"title": "Money" 
+},
+"x": {
+ "min":      0,
+"title": "Years" 
+} 
+},
+"coord": [],
+"title": "Compound Interest Graph",
+"id": "myChart" 
+}
+    _.each(chartParams.layers, function(el){
+        el.data = polyjs.data(el.data)
+    })
+    var graph_myChart = polyjs.chart(chartParams);
+</script>
+    
+    <script></script>    
+  </body>
+</html>
